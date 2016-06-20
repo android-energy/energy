@@ -1,0 +1,5 @@
+
+class ComponentModel(object):
+
+    def on_activity():
+        throw
