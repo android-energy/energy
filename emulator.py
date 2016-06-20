@@ -2,15 +2,16 @@ import threading
 import time
 import random
 
-class Emulator(object):
-    def __init__(self, bin):
-        self._bin = bin
-        self._running = False
-        self._thread = threading.Thread(target=self._loop)
+from subprocess import Popen, PIPE
 
+class Emulator(object):
+    def __init__(self, bin, *args):
+        self._running = False
         self._model = None
-        self._events = ('modem_driver_read', 'Started new RenderThread',
-                        '', 'akljflaj', 'lkjkljsdj', 'gps on', 'gps off')
+        self._thread = threading.Thread(target=self._loop)
+        # self._process = Popen([bin]+list(args), stderr=PIPE)
+        self._proc = Popen(['/home/diego/studio-dev/external/qemu/objs/emulator',
+                            '-verbose', '@Nexus4'], stderr=PIPE)
 
     def run(self, model):
         self.start(model)
@@ -22,16 +23,11 @@ class Emulator(object):
         self._model = model
         self._running = True
         self._thread.start()
-        self._thread.join()
 
     def stop(self):
         self._running = False
 
     def _loop(self):
-        for i in range(300):
-            next_event = random.randint(1, 10)
-            print 'next event in {}s'.format(next_event)
-            time.sleep(next_event)
-            e = random.choice(self._events)
-            print 'send event "{}"'.format(e)
-            self._model.on_event(e)
+        while self._running:
+            for e in self._proc.stderr.readline():
+                self._model.on_event(e)

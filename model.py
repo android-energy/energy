@@ -66,9 +66,9 @@ class Model(ComponentModel):
         return sum([c.get_current() for c in self._components.values()])
 
     def _handle_event(self, event):
-        handler_component = self._components.get(event)
-        if handler_component:
-            handler_component.on_event(event)
+        for k, v in self._components.items():
+            if k in event:
+                v.on_event(k)
 
     def _update(self):
          pass
