@@ -10,7 +10,7 @@ from threading import _Event
 class ComponentModel(object):
 
     def __init__(self):
-        self._tick = 1.0 #seconds
+        # self._tick = 1.0 #seconds
         self._running = False
         self._queue = Queue.Queue()
         self._thread = threading.Thread(target=self._loop)
@@ -32,7 +32,7 @@ class ComponentModel(object):
             except Queue.Empty:
                 pass
             self._update()
-            time.sleep(self._tick)
+            # time.sleep(self._tick)
 
     def on_event(self, event):
         self._queue.put(event)
@@ -66,6 +66,8 @@ class Model(ComponentModel):
         return sum([c.get_current() for c in self._components.values()])
 
     def _handle_event(self, event):
+        # TODO: accept regex
+        # print '_handle_event {}'.format(event)
         for k, v in self._components.items():
             if k in event:
                 v.on_event(k)

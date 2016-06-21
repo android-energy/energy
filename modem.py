@@ -23,6 +23,7 @@ class Modem(ComponentModel):
 	return self.get_state().current
 
     def _handle_event(self, e):
+        print 'modem: activated'
         self._set_state(0)
 
     def _update(self):
